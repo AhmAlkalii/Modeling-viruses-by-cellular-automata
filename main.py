@@ -1,10 +1,11 @@
 from choromap import create_choromap
 from plot import create_plots
 from sim import run_simulation, average_infection_rate, average_recovery_rate
-
+from LinearReg import  linreg
 def main():
     create_choromap()
     create_plots()
+    linreg()
 
     # Example simulation parameters
     grid_size = 80

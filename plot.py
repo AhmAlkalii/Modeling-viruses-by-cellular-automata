@@ -15,17 +15,17 @@ def create_plots():
 
     # Heatmap
     plt.figure(figsize=(10, 6))
-    sns.heatmap(covid.corr(), annot=True, cmap='coolwarm')
+    sns.heatmap(covid.corr(numeric_only=True), annot=True, cmap='coolwarm')
     plt.title('Correlation Heatmap')
     plt.show()
 
-    # Pairplot
-    # sns.pairplot(covid)
-    # plt.title('Pairplot of COVID Data')
-    # plt.show()
+    #Pairplot
+    sns.pairplot(covid)
+    plt.title('Pairplot of COVID Data')
+    plt.show()
 
 
-
+    #histogram
     sns.histplot(data = covid, bins=30)
     plt.title('Histogram of Covid Data')
     plt.xlabel('Value (Bins)')
