@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 def create_plots():
     # Load the data
     covid = pd.read_csv('USA Data.csv')
+    covid = covid.loc[:, ~covid.columns.str.contains('^Unnamed')]
+
 
     # Distribution plot
     sns.displot(covid['Recovered per 1M'], kde=True)
@@ -18,8 +20,16 @@ def create_plots():
     plt.show()
 
     # Pairplot
-    sns.pairplot(covid)
-    plt.title('Pairplot of COVID Data')
+    # sns.pairplot(covid)
+    # plt.title('Pairplot of COVID Data')
+    # plt.show()
+
+
+
+    sns.histplot(data = covid, bins=30)
+    plt.title('Histogram of Covid Data')
+    plt.xlabel('Value (Bins)')
+    plt.ylabel('Frequency (Count)')
     plt.show()
 
 if __name__ == "__main__":
