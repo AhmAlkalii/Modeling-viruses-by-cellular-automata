@@ -5,6 +5,7 @@ from plotly.offline import plot
 def create_choromap():
     # Load the data
     covid = pd.read_csv('USA Data.csv')
+    print(covid.head(1))
 
     # Create the choropleth map
     data_choropleth = dict(
