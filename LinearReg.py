@@ -13,8 +13,8 @@ def linreg():
 
     # Predicting Total Infected:
 
-    X = covid[['Total Cases', 'Total Deaths', 'Active Cases', 'Tot Cases/ 1M pop', 'Deaths/ 1M pop', 'Total Tests',
-               'Tests/ 1M pop', 'Population', 'Total Infected']]
+    X = covid[['Total Cases', 'Total Deaths', 'Active Cases', 'Total Cases per 1M', 'Death per 1M', 'Total Tests',
+               'Tests per 1M', 'Population', 'Total Infected']]
 
     y = covid['Recovered per 1M']
 
