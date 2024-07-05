@@ -24,7 +24,6 @@ def create_plots():
     plt.title('Pairplot of COVID Data')
     plt.show()
 
-
     #histogram
     sns.histplot(data = covid, bins=30)
     plt.title('Histogram of Covid Data')
