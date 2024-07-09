@@ -8,7 +8,7 @@ from matplotlib.colors import ListedColormap
 SUSCEPTIBLE = 0  # Green
 INFECTED = 1  # Red
 RECOVERED = 2  # Purple
-DEAD = 3      # Black
+DEAD = 3  # Black
 
 # Custom colormap
 cmap = ListedColormap(['green', 'red', 'purple', 'black'])
@@ -21,12 +21,14 @@ average_infection_rate = covid['Infected per 1M'].mean() / 1000000
 average_recovery_rate = covid['Recovered per 1M'].mean() / 1000000
 average_death_rate = covid['Death per 1M'].mean() / 1000000
 
+
 # Initialize the grid with susceptible and initially infected cells
 def initialize_grid(size, initial_infection_rate):
     grid = np.random.choice([SUSCEPTIBLE, INFECTED],
                             size=size * size,
                             p=[1 - initial_infection_rate, initial_infection_rate])
     return grid.reshape((size, size))
+
 
 # Update the grid based on infection, recovery, and death probabilities
 def update_grid(grid, infection_prob, recovery_prob, death_prob):
@@ -47,6 +49,7 @@ def update_grid(grid, infection_prob, recovery_prob, death_prob):
                                     new_grid[x, y] = INFECTED
     return new_grid
 
+
 # Display the grid with color representation and counts
 def display_grid(grid, step):
     plt.imshow(grid, cmap=cmap, vmin=0, vmax=3)
@@ -58,9 +61,11 @@ def display_grid(grid, step):
     infected_cells = np.sum(grid == INFECTED)
     recovered_cells = np.sum(grid == RECOVERED)
     dead_cells = np.sum(grid == DEAD)
-    plt.xlabel(f'Total Cells: {total_cells}  Infected Cells: {infected_cells}  Recovered Cells: {recovered_cells}  Dead Cells: {dead_cells}')
+    plt.xlabel(
+        f'Total Cells: {total_cells}  Infected Cells: {infected_cells}  Recovered Cells: {recovered_cells}  Dead Cells: {dead_cells}')
 
     plt.show()
+
 
 # Animate the simulation over a series of steps
 def animate_simulation(grid, steps, infection_prob, recovery_prob, death_prob):
@@ -77,22 +82,56 @@ def animate_simulation(grid, steps, infection_prob, recovery_prob, death_prob):
         infected_cells = np.sum(grid == INFECTED)
         recovered_cells = np.sum(grid == RECOVERED)
         dead_cells = np.sum(grid == DEAD)
-        ax.set_xlabel(f'Total Cells: {total_cells}  Infected Cells: {infected_cells}  Recovered Cells: {recovered_cells}  Dead Cells: {dead_cells}')
+        ax.set_xlabel(
+            f'Total Cells: {total_cells}  Infected Cells: {infected_cells}  Recovered Cells: {recovered_cells}  Dead Cells: {dead_cells}')
 
         return [im]
 
     anim = animation.FuncAnimation(fig, update, frames=steps, repeat=False)
     plt.show(block=True)
 
+
+# Plot the epidemiological curve
+def plot_epidemiological_curve(susceptible_counts, infected_counts, recovered_counts, dead_counts, steps):
+    plt.figure()
+    plt.plot(range(steps + 1), susceptible_counts, label='Susceptible', color='green')
+    plt.plot(range(steps + 1), infected_counts, label='Infected', color='red')
+    plt.plot(range(steps + 1), recovered_counts, label='Recovered', color='purple')
+    plt.plot(range(steps + 1), dead_counts, label='Dead', color='black')
+    plt.xlabel('Steps')
+    plt.ylabel('Count')
+    plt.title('Epidemiological Curve')
+    plt.legend()
+    plt.show()
+
+
 # Main function to run the simulation
 def run_simulation(grid_size, initial_infection_rate, infection_prob, recovery_prob, death_prob, steps):
     grid = initialize_grid(grid_size, initial_infection_rate)
+
+    # Initialize lists to store the counts of each state
+    susceptible_counts = [np.sum(grid == SUSCEPTIBLE)]
+    infected_counts = [np.sum(grid == INFECTED)]
+    recovered_counts = [np.sum(grid == RECOVERED)]
+    dead_counts = [np.sum(grid == DEAD)]
+
     display_grid(grid, 0)
+
     for step in range(1, steps + 1):
         grid = update_grid(grid, infection_prob, recovery_prob, death_prob)
         display_grid(grid, step)
 
+        # Update counts for the epidemiological curve
+        susceptible_counts.append(np.sum(grid == SUSCEPTIBLE))
+        infected_counts.append(np.sum(grid == INFECTED))
+        recovered_counts.append(np.sum(grid == RECOVERED))
+        dead_counts.append(np.sum(grid == DEAD))
+
+    # Plot the epidemiological curve
+    plot_epidemiological_curve(susceptible_counts, infected_counts, recovered_counts, dead_counts, steps)
+
+
 if __name__ == "__main__":
     run_simulation(grid_size=80, initial_infection_rate=average_infection_rate,
                    infection_prob=0.2, recovery_prob=average_recovery_rate,
-                   death_prob=average_death_rate, steps=10)
+                   death_prob=average_death_rate, steps=13)

@@ -13,7 +13,7 @@ def main():
     infection_prob = 0.2
     recovery_prob = average_recovery_rate
     death_prob = average_death_rate
-    steps = 10
+    steps = 13
 
     # Run simulation
     run_simulation(grid_size, initial_infection_rate, infection_prob, recovery_prob, death_prob, steps)

@@ -25,7 +25,7 @@ def create_choromap():
     )
 
     choromap = go.Figure(data=[data_choropleth], layout=layout_choropleth)
-    plot(choromap, validate=False)
+    # plot(choromap, validate=False)
 
 if __name__ == "__main__":
     create_choromap()
