@@ -21,14 +21,12 @@ average_infection_rate = covid['Infected per 1M'].mean() / 1000000
 average_recovery_rate = covid['Recovered per 1M'].mean() / 1000000
 average_death_rate = covid['Death per 1M'].mean() / 1000000
 
-
 # Initialize the grid with susceptible and initially infected cells
 def initialize_grid(size, initial_infection_rate):
     grid = np.random.choice([SUSCEPTIBLE, INFECTED],
                             size=size * size,
                             p=[1 - initial_infection_rate, initial_infection_rate])
     return grid.reshape((size, size))
-
 
 # Update the grid based on infection, recovery, and death probabilities
 def update_grid(grid, infection_prob, recovery_prob, death_prob):
@@ -49,7 +47,6 @@ def update_grid(grid, infection_prob, recovery_prob, death_prob):
                                     new_grid[x, y] = INFECTED
     return new_grid
 
-
 # Display the grid with color representation and counts
 def display_grid(grid, step):
     plt.imshow(grid, cmap=cmap, vmin=0, vmax=3)
@@ -66,9 +63,30 @@ def display_grid(grid, step):
 
     plt.show()
 
+# Plot the epidemiological curve
+def plot_epidemiological_curve(susceptible_counts, infected_counts, recovered_counts, dead_counts, steps):
+    plt.figure()
+    plt.plot(range(steps + 1), susceptible_counts, label='Susceptible', color='green')
+    plt.plot(range(steps + 1), infected_counts, label='Infected', color='red')
+    plt.plot(range(steps + 1), recovered_counts, label='Recovered', color='purple')
+    plt.plot(range(steps + 1), dead_counts, label='Dead', color='black')
+    plt.xlabel('Steps')
+    plt.ylabel('Count')
+    plt.title('Epidemiological Curve')
+    plt.legend()
+    plt.show()
 
-# Animate the simulation over a series of steps
-def animate_simulation(grid, steps, infection_prob, recovery_prob, death_prob):
+# Plot heatmap of the grid state
+def plot_heatmap(grid, step):
+    plt.figure()
+    plt.imshow(grid, cmap=cmap, vmin=0, vmax=3)
+    plt.title(f'Heatmap at Step {step}')
+    cbar = plt.colorbar(ticks=[0, 1, 2, 3], format='%d', label='State')
+    cbar.ax.set_yticklabels(['Susceptible', 'Infected', 'Recovered', 'Dead'])
+    plt.show()
+
+# Display the animation
+def display_animation(grid, steps, infection_prob, recovery_prob, death_prob):
     fig, ax = plt.subplots()
     im = ax.imshow(grid, cmap=cmap, vmin=0, vmax=3)
 
@@ -88,22 +106,27 @@ def animate_simulation(grid, steps, infection_prob, recovery_prob, death_prob):
         return [im]
 
     anim = animation.FuncAnimation(fig, update, frames=steps, repeat=False)
-    plt.show(block=True)
-
-
-# Plot the epidemiological curve
-def plot_epidemiological_curve(susceptible_counts, infected_counts, recovered_counts, dead_counts, steps):
-    plt.figure()
-    plt.plot(range(steps + 1), susceptible_counts, label='Susceptible', color='green')
-    plt.plot(range(steps + 1), infected_counts, label='Infected', color='red')
-    plt.plot(range(steps + 1), recovered_counts, label='Recovered', color='purple')
-    plt.plot(range(steps + 1), dead_counts, label='Dead', color='black')
-    plt.xlabel('Steps')
-    plt.ylabel('Count')
-    plt.title('Epidemiological Curve')
-    plt.legend()
     plt.show()
 
+# Plot bar chart of cell states
+def plot_bar_chart(grid, step):
+    counts = [np.sum(grid == state) for state in [SUSCEPTIBLE, INFECTED, RECOVERED, DEAD]]
+    labels = ['Susceptible', 'Infected', 'Recovered', 'Dead']
+    plt.figure()
+    plt.bar(labels, counts, color=['green', 'red', 'purple', 'black'])
+    plt.title(f'Bar Chart of Cell States at Step {step}')
+    plt.xlabel('State')
+    plt.ylabel('Count')
+    plt.show()
+
+# Plot pie chart of cell states
+def plot_pie_chart(grid, step):
+    counts = [np.sum(grid == state) for state in [SUSCEPTIBLE, INFECTED, RECOVERED, DEAD]]
+    labels = ['Susceptible', 'Infected', 'Recovered', 'Dead']
+    plt.figure()
+    plt.pie(counts, labels=labels, colors=['green', 'red', 'purple', 'black'], autopct='%1.1f%%')
+    plt.title(f'Pie Chart of Cell States at Step {step}')
+    plt.show()
 
 # Main function to run the simulation
 def run_simulation(grid_size, initial_infection_rate, infection_prob, recovery_prob, death_prob, steps):
@@ -115,11 +138,14 @@ def run_simulation(grid_size, initial_infection_rate, infection_prob, recovery_p
     recovered_counts = [np.sum(grid == RECOVERED)]
     dead_counts = [np.sum(grid == DEAD)]
 
-    display_grid(grid, 0)
+    plot_heatmap(grid, 0)  # Initial heatmap
+    plot_pie_chart(grid, 0)  # Initial pie chart
 
     for step in range(1, steps + 1):
         grid = update_grid(grid, infection_prob, recovery_prob, death_prob)
-        display_grid(grid, step)
+        plot_heatmap(grid, step)  # Update heatmap for each step
+        plot_bar_chart(grid, step)  # Update bar chart for each step
+        plot_pie_chart(grid, step)  # Update pie chart for each step
 
         # Update counts for the epidemiological curve
         susceptible_counts.append(np.sum(grid == SUSCEPTIBLE))
@@ -130,6 +156,8 @@ def run_simulation(grid_size, initial_infection_rate, infection_prob, recovery_p
     # Plot the epidemiological curve
     plot_epidemiological_curve(susceptible_counts, infected_counts, recovered_counts, dead_counts, steps)
 
+    # Display animation
+    display_animation(grid, steps, infection_prob, recovery_prob, death_prob)
 
 if __name__ == "__main__":
     run_simulation(grid_size=80, initial_infection_rate=average_infection_rate,
