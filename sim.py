@@ -139,10 +139,14 @@ def run_simulation(grid_size, initial_infection_rate, infection_prob, recovery_p
     dead_counts = [np.sum(grid == DEAD)]
 
     plot_heatmap(grid, 0)  # Initial heatmap
+    plot_bar_chart(grid, 0)  # Initial bar chart
+    plot_pie_chart(grid, 0)  # Initial pie chart
 
     for step in range(1, steps + 1):
         grid = update_grid(grid, infection_prob, recovery_prob, death_prob)
         plot_heatmap(grid, step)  # Update heatmap for each step
+        plot_bar_chart(grid, step)  # Bar chart for each step
+        plot_pie_chart(grid, step)  # Pie chart for each step
 
         # Update counts for the epidemiological curve
         susceptible_counts.append(np.sum(grid == SUSCEPTIBLE))
@@ -152,6 +156,7 @@ def run_simulation(grid_size, initial_infection_rate, infection_prob, recovery_p
 
     # Plot the epidemiological curve
     plot_epidemiological_curve(susceptible_counts, infected_counts, recovered_counts, dead_counts, steps)
+
 
     # Plot the final bar chart and pie chart after the simulation
     plot_bar_chart(grid, steps)
