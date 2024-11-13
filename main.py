@@ -8,7 +8,7 @@ def main():
     # linreg()
 
     # Example simulation parameters
-    grid_size = 80
+    grid_size = 50
     initial_infection_rate = average_infection_rate
     infection_prob = 0.2
     recovery_prob = average_recovery_rate

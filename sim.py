@@ -47,21 +47,6 @@ def update_grid(grid, infection_prob, recovery_prob, death_prob):
                                     new_grid[x, y] = INFECTED
     return new_grid
 
-# Display the grid with color representation and counts
-def display_grid(grid, step):
-    plt.imshow(grid, cmap=cmap, vmin=0, vmax=3)
-    plt.title(f'Step: {step}')
-    cbar = plt.colorbar(ticks=[0, 1, 2, 3], format='%d', label='State')
-    cbar.ax.set_yticklabels(['Susceptible', 'Infected', 'Recovered', 'Dead'])
-
-    total_cells = grid.size
-    infected_cells = np.sum(grid == INFECTED)
-    recovered_cells = np.sum(grid == RECOVERED)
-    dead_cells = np.sum(grid == DEAD)
-    plt.xlabel(
-        f'Total Cells: {total_cells}  Infected Cells: {infected_cells}  Recovered Cells: {recovered_cells}  Dead Cells: {dead_cells}')
-
-    plt.show()
 
 # Plot the epidemiological curve
 def plot_epidemiological_curve(susceptible_counts, infected_counts, recovered_counts, dead_counts, steps):
@@ -79,34 +64,24 @@ def plot_epidemiological_curve(susceptible_counts, infected_counts, recovered_co
 # Plot heatmap of the grid state
 def plot_heatmap(grid, step):
     plt.figure()
+    ax = plt.gca()
     plt.imshow(grid, cmap=cmap, vmin=0, vmax=3)
     plt.title(f'Heatmap at Step {step}')
     cbar = plt.colorbar(ticks=[0, 1, 2, 3], format='%d', label='State')
     cbar.ax.set_yticklabels(['Susceptible', 'Infected', 'Recovered', 'Dead'])
+
+    # Add counts to xlabel
+    total_cells = grid.size
+    infected_cells = np.sum(grid == INFECTED)
+    recovered_cells = np.sum(grid == RECOVERED)
+    dead_cells = np.sum(grid == DEAD)
+    ax.set_xlabel(
+        f'Total Cells: {total_cells}  Infected Cells: {infected_cells}  Recovered Cells: {recovered_cells}  Dead Cells: {dead_cells}'
+    )
+
+    plt.tight_layout()
     plt.show()
 
-# Display the animation
-def display_animation(grid, steps, infection_prob, recovery_prob, death_prob):
-    fig, ax = plt.subplots()
-    im = ax.imshow(grid, cmap=cmap, vmin=0, vmax=3)
-
-    def update(frame):
-        nonlocal grid
-        grid = update_grid(grid, infection_prob, recovery_prob, death_prob)
-        im.set_array(grid)
-        ax.set_title(f'Step: {frame}')
-
-        total_cells = grid.size
-        infected_cells = np.sum(grid == INFECTED)
-        recovered_cells = np.sum(grid == RECOVERED)
-        dead_cells = np.sum(grid == DEAD)
-        ax.set_xlabel(
-            f'Total Cells: {total_cells}  Infected Cells: {infected_cells}  Recovered Cells: {recovered_cells}  Dead Cells: {dead_cells}')
-
-        return [im]
-
-    anim = animation.FuncAnimation(fig, update, frames=steps, repeat=False)
-    plt.show()
 
 # Plot bar chart of cell states
 def plot_bar_chart(grid, step):
@@ -139,14 +114,10 @@ def run_simulation(grid_size, initial_infection_rate, infection_prob, recovery_p
     dead_counts = [np.sum(grid == DEAD)]
 
     plot_heatmap(grid, 0)  # Initial heatmap
-    plot_bar_chart(grid, 0)  # Initial bar chart
-    plot_pie_chart(grid, 0)  # Initial pie chart
 
     for step in range(1, steps + 1):
         grid = update_grid(grid, infection_prob, recovery_prob, death_prob)
         plot_heatmap(grid, step)  # Update heatmap for each step
-        plot_bar_chart(grid, step)  # Bar chart for each step
-        plot_pie_chart(grid, step)  # Pie chart for each step
 
         # Update counts for the epidemiological curve
         susceptible_counts.append(np.sum(grid == SUSCEPTIBLE))
@@ -157,12 +128,11 @@ def run_simulation(grid_size, initial_infection_rate, infection_prob, recovery_p
     # Plot the epidemiological curve
     plot_epidemiological_curve(susceptible_counts, infected_counts, recovered_counts, dead_counts, steps)
 
-
     # Plot the final bar chart and pie chart after the simulation
     plot_bar_chart(grid, steps)
     plot_pie_chart(grid, steps)
 
-if __name__ == "__main__":
-    run_simulation(grid_size=80, initial_infection_rate=average_infection_rate,
-                   infection_prob=0.2, recovery_prob=average_recovery_rate,
-                   death_prob=average_death_rate, steps=13)
+# if __name__ == "__main__":
+#     run_simulation(grid_size=50, initial_infection_rate=average_infection_rate,
+#                    infection_prob=0.2, recovery_prob=average_recovery_rate,
+#                    death_prob=average_death_rate, steps=19)
