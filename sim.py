@@ -82,7 +82,6 @@ def plot_heatmap(grid, step):
     plt.tight_layout()
     plt.show()
 
-
 # Plot bar chart of cell states
 def plot_bar_chart(grid, step):
     counts = [np.sum(grid == state) for state in [SUSCEPTIBLE, INFECTED, RECOVERED, DEAD]]
